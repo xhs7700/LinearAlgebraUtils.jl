@@ -70,4 +70,10 @@ function domindiag(L::AbstractMatrix)
     return L * ones(eltype(L), N)
 end
 
+function lap_pinv(L::AbstractMatrix)
+    N = size(L, 1)
+    J = ones(eltype(L), N, N) / N
+    return inv(Matrix(L) + J) - J
+end
+
 end # module LinearAlgebraUtils
