@@ -6,6 +6,7 @@ using Statistics
 
 export dspl, descrip, getratio, getratios, writeratio
 export subindices, submat, subvec, subcolmat, subrowmat, submat
+export lap_pinv
 
 dspl(x) = Base.Multimedia.display(x), println()
 
@@ -13,9 +14,9 @@ descrip(v::VecOrMat) = (min=reduce(min, v; init=Inf), max=reduce(max, v; init=0)
 
 getratio(std::T, test::T) where {T<:Real} = abs(std - test) / std
 
-getratios(std::Vector{T}, test::Vector{T}) where {T<:Real} = getratio.(std, test)
+getratios(std::VecOrMat{T}, test::VecOrMat{T}) where {T<:Real} = getratio.(std, test)
 
-function writeratio(path::AbstractString, std::Vector{T}, test::Vector{T}) where {T<:Real}
+function writeratio(path::AbstractString, std::VecOrMat{T}, test::VecOrMat{T}) where {T<:Real}
     ratios = getratios(std, test)
     N = length(ratios)
     open(path, "w") do io
