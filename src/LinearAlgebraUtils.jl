@@ -7,6 +7,7 @@ using Statistics
 export dspl, descrip, getratio, getratios, writeratio
 export subindices, submat, subvec, subcolmat, subrowmat, submat
 export lap_pinv
+export unitvec
 
 dspl(x) = Base.Multimedia.display(x), println()
 
@@ -75,6 +76,14 @@ function lap_pinv(L::AbstractMatrix)
     N = size(L, 1)
     J = ones(eltype(L), N, N) / N
     return inv(Matrix(L) + J) - J
+end
+
+unitvec(N::Int, x::Int) = unitvec(Float64, N, x)
+
+function unitvec(::Type{T}, N::Int, x::Int) where {T}
+    a = zeros(T, N)
+    a[x] = one(T)
+    return a
 end
 
 end # module LinearAlgebraUtils
