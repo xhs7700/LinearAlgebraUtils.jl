@@ -4,7 +4,9 @@ using LinearAlgebra
 using SparseArrays
 using Statistics
 
-export dspl, descrip, getratio, getratios, writeratio
+export dspl, descrip
+export getratio, getratios, writeratio
+export getdiff, getdiffs, writediff
 export subindices, submat, subvec, subcolmat, subrowmat, submat
 export lap_pinv
 export unitvec
@@ -13,20 +15,23 @@ dspl(x) = Base.Multimedia.display(x), println()
 
 descrip(v::VecOrMat) = (min=reduce(min, v; init=Inf), max=reduce(max, v; init=0), mean=mean(v), median=median(v))
 
-getratio(std::T, test::T) where {T<:Real} = abs(std - test) / std
+getratio(std::T1, test::T2) where {T1<:Real,T2<:Real} = abs(std - test) / std
+getratios(std::VecOrMat{T1}, test::VecOrMat{T2}) where {T1<:Real,T2<:Real} = getratio.(std, test)
+writeratio(path::AbstractString, std::VecOrMat{T1}, test::VecOrMat{T2}) where {T1<:Real,T2<:Real} = writeinfo(path, std, test, getratios(std, test), "ratio")
 
-getratios(std::VecOrMat{T}, test::VecOrMat{T}) where {T<:Real} = getratio.(std, test)
+getdiff(std::T1, test::T2) where {T1<:Real,T2<:Real} = abs(std - test)
+getdiffs(std::VecOrMat{T1}, test::VecOrMat{T2}) where {T1<:Real,T2<:Real} = getdiff.(std, test)
+writediff(path::AbstractString, std::VecOrMat{T1}, test::VecOrMat{T2}) where {T1<:Real,T2<:Real} = writeinfo(path, std, test, getdiffs(std, test), "diff")
 
-function writeratio(path::AbstractString, std::VecOrMat{T}, test::VecOrMat{T}) where {T<:Real}
-    ratios = getratios(std, test)
-    N = length(ratios)
+function writeinfo(path::AbstractString, std::VecOrMat{T1}, test::VecOrMat{T2}, info::VecOrMat, info_name::AbstractString) where {T1<:Real,T2<:Real}
+    N = length(info)
     open(path, "w") do io
-        write(io, "i, std, test, ratio\n")
+        write(io, "i, std, test, $info_name\n")
         for i in 1:N
-            write(io, "$i, $(std[i]), $(test[i]), $(ratios[i])\n")
+            write(io, "$i, $(std[i]), $(test[i]), $(info[i])\n")
         end
     end
-    return descrip(ratios)
+    return descrip(info)
 end
 
 function subindices(N::Int, S::Vector{Int})
