@@ -85,7 +85,7 @@ end
 
 unitvec(N::Int, x::Int) = unitvec(Float64, N, x)
 
-function unitvec(::Type{T}, N::Int, x::Int) where {T}
+function unitvec(::Type{T}, N::Int, x::Int) where {T<:Real}
     a = zeros(T, N)
     a[x] = one(T)
     return a
