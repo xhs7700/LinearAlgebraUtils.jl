@@ -15,7 +15,7 @@ dspl(x) = Base.Multimedia.display(x), println()
 
 descrip(v::VecOrMat) = (min=reduce(min, v; init=Inf), max=reduce(max, v; init=0), mean=mean(v), median=median(v))
 
-getratio(std::T1, test::T2) where {T1<:Real,T2<:Real} = abs(std - test) / std
+getratio(std::T1, test::T2) where {T1<:Real,T2<:Real} = abs(std - test) / abs(std)
 getratios(std::VecOrMat{T1}, test::VecOrMat{T2}) where {T1<:Real,T2<:Real} = getratio.(std, test)
 writeratio(path::AbstractString, std::VecOrMat{T1}, test::VecOrMat{T2}) where {T1<:Real,T2<:Real} = writeinfo(path, std, test, getratios(std, test), "ratio")
 
